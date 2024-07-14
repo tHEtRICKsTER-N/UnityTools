@@ -1,3 +1,5 @@
+// To add the scene in the list, just Add your scene to the Build Settings first !
+
 using UnityEditor;
 using UnityEngine;
 using System.IO;
