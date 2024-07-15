@@ -1,4 +1,6 @@
-// To add the scene in the list, just Add your scene to the Build Settings first !
+//It scans for all the scenes in your project.
+//The list is updated as soon as a scene is added into the project.
+//You can also search for a particular scene in your project.
 
 using UnityEditor;
 using UnityEngine;
