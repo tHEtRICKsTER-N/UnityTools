@@ -17,10 +17,30 @@ public class SceneGridEditorWindow : EditorWindow
     private string sceneSearchFilter = "";
     private List<string> favouriteScenes = new List<string>();
 
+    // Key for storing favorite scenes in EditorPrefs
+    private const string FavouriteScenesKey = "FavouriteScenesKey";
+
     [MenuItem("Window/Scene Quick Access")]
     private static void ShowWindow()
     {
         GetWindow<SceneGridEditorWindow>("Scene Quick Access");
+    }
+
+    private void OnEnable()
+    {
+        // Load stored favorite scenes from EditorPrefs
+        if (EditorPrefs.HasKey(FavouriteScenesKey))
+        {
+            string serializedFavourites = EditorPrefs.GetString(FavouriteScenesKey);
+            favouriteScenes = serializedFavourites.Split(';').ToList();
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Save favorite scenes to EditorPrefs when the window is closed
+        string serializedFavourites = string.Join(";", favouriteScenes.ToArray());
+        EditorPrefs.SetString(FavouriteScenesKey, serializedFavourites);
     }
 
     private void OnGUI()
@@ -49,7 +69,7 @@ public class SceneGridEditorWindow : EditorWindow
         }
         else
         {
-            foreach (var scene in favouriteScenes)
+            foreach (var scene in favouriteScenes.ToList())
             {
                 GUILayout.BeginVertical();
                 // Display scene icon
@@ -136,3 +156,4 @@ public class SceneGridEditorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 }
+
