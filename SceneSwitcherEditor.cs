@@ -1,6 +1,6 @@
-//It scans for all the scenes in your project.
-//The list is updated as soon as a scene is added into the project.
-//You can also search for a particular scene in your project.
+//It lists down all the scenes in your project.
+//The list is updated as soon as a scene is deleted or created.
+//You can Locate, Open or Delete the Scene
 
 using UnityEditor;
 using UnityEngine;
@@ -27,9 +27,9 @@ public class SceneGridEditorWindow : EditorWindow
 
         // Get all scenes in the build settings
         var scenes = AssetDatabase.FindAssets("t:Scene")
-      .Select(AssetDatabase.GUIDToAssetPath)
-      .Where(scenePath => string.IsNullOrEmpty(sceneSearchFilter) || Path.GetFileNameWithoutExtension(scenePath).ToLower().Contains(sceneSearchFilter.ToLower()))
-      .OrderBy(scenePath => scenePath);
+            .Select(AssetDatabase.GUIDToAssetPath)
+            .Where(scenePath => string.IsNullOrEmpty(sceneSearchFilter) || Path.GetFileNameWithoutExtension(scenePath).ToLower().Contains(sceneSearchFilter.ToLower()))
+            .OrderBy(scenePath => scenePath);
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
         foreach (var scene in scenes)
@@ -49,15 +49,28 @@ public class SceneGridEditorWindow : EditorWindow
             GUILayout.Label(sceneName, GUILayout.ExpandWidth(true));
 
             // Button to locate scene in the Project tab
+            GUI.backgroundColor = Color.blue;
             if (GUILayout.Button("Locate", GUILayout.Width(60)))
             {
                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(scene));
             }
 
             // Button to directly open the scene
+            GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Open", GUILayout.Width(60)))
             {
                 EditorSceneManager.OpenScene(scene);
+            }
+
+            // Button to delete the scene
+            GUI.backgroundColor = Color.red;
+            if (GUILayout.Button("Delete", GUILayout.Width(60)))
+            {
+                if (EditorUtility.DisplayDialog("Delete Scene", $"Are you sure you want to delete the scene '{sceneName}'?", "Yes", "No"))
+                {
+                    AssetDatabase.DeleteAsset(scene);
+                    AssetDatabase.Refresh();
+                }
             }
 
             GUILayout.EndHorizontal();
