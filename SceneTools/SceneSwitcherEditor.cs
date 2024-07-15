@@ -84,6 +84,7 @@ public class SceneGridEditorWindow : EditorWindow
                 if (GUILayout.Button("Remove", GUILayout.Width(150)))
                 {
                     favouriteScenes.Remove(scene);
+                    GUILayout.EndVertical();
                     break; // Exit the loop to avoid modifying the collection while iterating
                 }
                 GUILayout.EndVertical();
@@ -156,4 +157,3 @@ public class SceneGridEditorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 }
-
