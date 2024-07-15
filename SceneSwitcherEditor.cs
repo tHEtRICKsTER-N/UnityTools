@@ -4,10 +4,12 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using UnityEditor.SceneManagement;
+using System.Linq;
 
 public class SceneGridEditorWindow : EditorWindow
 {
     private Vector2 scrollPosition;
+    private string sceneSearchFilter = "";
 
     [MenuItem("Window/Scene Quick Access")]
     private static void ShowWindow()
@@ -19,8 +21,13 @@ public class SceneGridEditorWindow : EditorWindow
     {
         GUILayout.Label("Scene Quick Access", EditorStyles.boldLabel);
 
+        sceneSearchFilter = EditorGUILayout.TextField("Search", sceneSearchFilter);
+
         // Get all scenes in the build settings
-        var scenes = EditorBuildSettings.scenes;
+        var scenes = AssetDatabase.FindAssets("t:Scene")
+      .Select(AssetDatabase.GUIDToAssetPath)
+      .Where(scenePath => string.IsNullOrEmpty(sceneSearchFilter) || Path.GetFileNameWithoutExtension(scenePath).ToLower().Contains(sceneSearchFilter.ToLower()))
+      .OrderBy(scenePath => scenePath);
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
         foreach (var scene in scenes)
@@ -28,7 +35,7 @@ public class SceneGridEditorWindow : EditorWindow
             GUILayout.BeginHorizontal();
 
             // Extract scene name from the path
-            string sceneName = Path.GetFileNameWithoutExtension(scene.path);
+            string sceneName = Path.GetFileNameWithoutExtension(scene);
 
             // Display custom scene icon if available, otherwise use default scene icon
             Texture2D sceneIcon = EditorGUIUtility.IconContent("SceneAsset Icon").image as Texture2D;
@@ -42,13 +49,13 @@ public class SceneGridEditorWindow : EditorWindow
             // Button to locate scene in the Project tab
             if (GUILayout.Button("Locate", GUILayout.Width(60)))
             {
-                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path));
+                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<SceneAsset>(scene));
             }
 
             // Button to directly open the scene
             if (GUILayout.Button("Open", GUILayout.Width(60)))
             {
-                EditorSceneManager.OpenScene(scene.path);
+                EditorSceneManager.OpenScene(scene);
             }
 
             GUILayout.EndHorizontal();
