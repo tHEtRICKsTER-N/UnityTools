@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-public class SceneQuickAccessWindow : EditorWindow
+public class SceneSwitcherEditor : EditorWindow
 {
     private Vector2 scrollPosition;
     private Vector2 favouritesScrollPosition;
@@ -23,7 +23,7 @@ public class SceneQuickAccessWindow : EditorWindow
     [MenuItem("Window/Scene Quick Access")]
     private static void ShowWindow()
     {
-        GetWindow<SceneQuickAccessWindow>("Scene Quick Access");
+        GetWindow<SceneSwitcherEditor>("Scene Quick Access");
     }
 
     private void OnEnable()
