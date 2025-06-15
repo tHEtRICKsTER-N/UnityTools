@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-public class SceneGridEditorWindow : EditorWindow
+public class SceneSwitcherEditor : EditorWindow
 {
     private Vector2 scrollPosition;
     private Vector2 favouritesScrollPosition;
@@ -23,7 +23,7 @@ public class SceneGridEditorWindow : EditorWindow
     [MenuItem("Window/Scene Quick Access")]
     private static void ShowWindow()
     {
-        GetWindow<SceneGridEditorWindow>("Scene Quick Access");
+        GetWindow<SceneSwitcherEditor>("Scene Quick Access");
     }
 
     private void OnEnable()
@@ -84,6 +84,7 @@ public class SceneGridEditorWindow : EditorWindow
                 if (GUILayout.Button("Remove", GUILayout.Width(150)))
                 {
                     favouriteScenes.Remove(scene);
+                    GUILayout.EndVertical();
                     break; // Exit the loop to avoid modifying the collection while iterating
                 }
                 GUILayout.EndVertical();
@@ -141,11 +142,19 @@ public class SceneGridEditorWindow : EditorWindow
                 }
             }
 
-            // Button to add the scene to favourites
-            GUI.backgroundColor = Color.yellow;
-            if (GUILayout.Button("Favourite", GUILayout.Width(80)))
+            // Determine if the scene is already in favourites
+            bool isFavourite = favouriteScenes.Contains(scene);
+
+            // Button to add/remove the scene from favourites
+            GUI.backgroundColor = isFavourite ? Color.gray : Color.yellow;
+            string favButtonLabel = isFavourite ? "Remove" : "Favourite";
+            if (GUILayout.Button(favButtonLabel, GUILayout.Width(80)))
             {
-                if (!favouriteScenes.Contains(scene))
+                if (isFavourite)
+                {
+                    favouriteScenes.Remove(scene);
+                }
+                else
                 {
                     favouriteScenes.Add(scene);
                 }
@@ -156,4 +165,3 @@ public class SceneGridEditorWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 }
-
